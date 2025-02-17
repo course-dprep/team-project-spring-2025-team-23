@@ -82,28 +82,28 @@ To analyze the impact of the T-Mobile and Sprint merger on the U.S. telecommunic
 
 The primary regression model is specified as follows:
 
-`\( \text{MarketShare}_{i, c, t} = \beta_0 + \beta_1 \text{MergerDate}_t + \Gamma \text{TechnologyControls}_{i, t} + \delta_c + \lambda_t + \epsilon_{i, c, t} \)`
+MarketShare_{i, c, t} = β_0 + β_1 MergerDate_t + Γ TechnologyControls_{i, t} + δ_c + λ_t + ε_{i, c, t}
 
 
 And
 
-`\( \text{ConsumerConversionRatio}_{j, c, t} = \beta_0 + \beta_1 \text{MergerDate}_t + \Gamma \text{TechnologyControls}_{j, t} + \delta_c + \lambda_t + \epsilon_{j, c, t} \)`
+ConsumerConversionRatio_{j, c, t} = β_0 + β_1 MergerDate_t + Γ TechnologyControls_{j, t} + δ_c + λ_t + ε_{j, c, t}
 
 
 Where:
-- `\( \text{MarketShare}_{i, c, t} \) = Market share of company \( i \) in CBSA \( c \) at time \( t \).
-- \( \text{ConsumerConversionRatio}_{i, c, t} \) = Loss conversion ratio \( i \) in CBSA \( c \) at time \( t \).
-- \( \text{MergerDate}_t \) = Indicator variable that equals 1 after the T-Mobile/Sprint merger date and 0 otherwise.
-- \( \text{TechnologyControls}_{i, t} \) = A set of controls accounting for differences in network technologies (e.g., 4G, 5G deployment).
-- \( \delta_c \) = CBSA Fixed Effects to control for region-specific factors.
-- \( \lambda_t \) = Monthly Fixed Effects to account for time trends and seasonality.
-- \( \epsilon_{i, c, t} \) = The error term capturing unexplained variation.
+- `MarketShare_{i, c, t}` = Market share of company `i` in CBSA `c` at time `t`.
+- `ConsumerConversionRatio_{i, c, t}` = Loss conversion ratio `i` in CBSA `c` at time `t`.
+- `MergerDate_t` = Indicator variable that equals 1 after the T-Mobile/Sprint merger date and 0 otherwise.
+- `TechnologyControls_{i, t}` = A set of controls accounting for differences in network technologies (e.g., 4G, 5G deployment).
+- `δ_c` = CBSA Fixed Effects to control for region-specific factors.
+- `λ_t` = Monthly Fixed Effects to account for time trends and seasonality.
+- `ε_{i, c, t}` = The error term capturing unexplained variation.
 
 **Why this model?**
 I choose the Fixed Effects (FE) approach for the following reasons:
-1. **Controls for Regional Differences**: Different CBSAs may have unique market conditions, and including CBSA Fixed Effects (\(\delta_c\)) helps eliminate bias from these differences.
-2. **Accounts for Time Trends**: Monthly Fixed Effects (\(\lambda_t\)) control for external shocks, such as economic conditions or industry-wide changes in pricing strategies.
-3. **Distinguishes Causal Impact of the Merger**: The inclusion of a Merger Date dummy (\(\text{MergerDate}_t\)) allows to assess whether market share significantly changed after the merger.
+1. **Controls for Regional Differences**: Different CBSAs may have unique market conditions, and including CBSA Fixed Effects (`δ_c`) helps eliminate bias from these differences.
+2. **Accounts for Time Trends**: Monthly Fixed Effects (`λ_t`) control for external shocks, such as economic conditions or industry-wide changes in pricing strategies.
+3. **Distinguishes Causal Impact of the Merger**: The inclusion of a Merger Date dummy (\(`MergerDate_t`) allows to assess whether market share significantly changed after the merger.
 4. **Technology Controls**: Network improvements, such as the rollout of 5G, may independently affect market share, so I include technology variables to avoid confounding effects.
 
 
