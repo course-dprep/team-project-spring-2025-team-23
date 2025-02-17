@@ -1,0 +1,193 @@
+---
+title: "First Deliverable"
+author: "Javier Torralba"
+date: "2025-02-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+# Telecom project
+This project studies the merger of two of the four main telecommunication providers in the United States. The four main companies in this market are AT&T, Verizon, Sprint, and T-Mobile. In 2020, the merger of both Sprint and T-Mobile was approved, causing market changes. These market changes are still not known today. This project aims to fill the gap in the literature explaining the effects of the merger in the market shares of the American Telecommunication market. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load relevant libraries and set WD
+```{r}
+library(dplyr)
+library(ggplot2)
+library(data.table)
+library(tidyr)
+library(viridis)
+```
+
+## Understanding the opening and closing of stores
+We have data on the openings and closures of Sprint and T-Mobile stores in the US. These visualizations allow us to understand when each store opened and closed
+
+```{r}
+# Load data
+ozgun_2018 <- fread("~/researchdrive/telecom/safegraph/ozgun/2018data.csv")
+ozgun_2019 <- fread("~/researchdrive/telecom/safegraph/ozgun/2019data.csv") 
+ozgun_2020 <- fread("~/researchdrive/telecom/safegraph/ozgun/2020data.csv")
+base_file <- fread('~/researchdrive/telecom/safegraph/ozgun/base_file.csv')
+
+# Loading relevan data
+telecom_safegraph_2018 <- merge(ozgun_2018, base_file, by = 'placekey')
+telecom_safegraph_2019 <- merge(ozgun_2019, base_file, by = 'placekey')
+telecom_safegraph_2020 <- merge(ozgun_2020, base_file, by = 'placekey')
+
+rm(ozgun_2018)
+rm(ozgun_2019)
+rm(ozgun_2020)
+
+# Filtering for Sprint locations
+sprint_2018 <- telecom_safegraph_2018 %>%
+  filter(location_name == "Sprint")
+
+sprint_2019 <- telecom_safegraph_2019 %>%
+  filter(location_name == "Sprint")
+
+sprint_2020 <- telecom_safegraph_2020 %>%
+  filter(location_name == "Sprint")
+
+
+# Relevant Sprint 2020 data
+relevant_sprint_2020 <- sprint_2020 %>%
+  select(placekey, 
+         month, 
+         year, 
+         filename, 
+         raw_visit_counts, 
+         raw_visitor_counts,
+         street_address,
+         city,
+         region,
+         postal_code,
+         opened_on, 
+         closed_on,
+         tracking_closed_since,
+         postal_code) %>%
+  mutate(count = 1) %>%
+  group_by(placekey, closed_on, street_address, opened_on, postal_code) %>%
+  summarise(sum(count)) %>%
+  mutate(closed_on = ifelse(closed_on == "", "still open", closed_on))
+
+```
+
+```{r}
+# Let's visualize the frequency of closed Sprint stores!
+ggplot(relevant_sprint_2020, aes(x = closed_on)) + 
+  geom_bar() +
+  theme_bw() +
+  labs(title = "Frequency of closing of Sprint stores",
+       x = "Closed On",
+       y = "Count",
+       caption = "Safegraph data claims to have a 60 day margin of error. Made by Javier Torralba")
+
+```
+
+```{r}
+ggplot(relevant_sprint_2020, aes(x = opened_on)) + 
+  geom_bar() +
+  theme_bw() +
+  labs(title = "Frequency of opening of Sprint stores in data",
+       x = "Opened On",
+       y = "Count",
+       caption = "Made by Javier Torralba")
+```
+```{r}
+# Filtering for Sprint locations
+t_mobile_2018 <- telecom_safegraph_2018 %>%
+  filter(brands == "['T-Mobile']")
+
+t_mobile_2019 <- telecom_safegraph_2019 %>%
+  filter(brands == "['T-Mobile']")
+
+t_mobile_2020 <- telecom_safegraph_2020 %>%
+  filter(brands == "['T-Mobile']")
+
+
+# Relevant Sprint 2020 data
+relevant_t_mobile_2020 <- t_mobile_2020 %>%
+  select(placekey, 
+         month, 
+         year, 
+         filename, 
+         raw_visit_counts, 
+         raw_visitor_counts,
+         street_address,
+         city,
+         region,
+         postal_code,
+         opened_on, 
+         closed_on,
+         tracking_closed_since) %>%
+  mutate(count = 1) %>%
+  group_by(placekey, closed_on, street_address, opened_on, region) %>%
+  summarise(sum(count)) %>%
+  mutate(closed_on = ifelse(closed_on == "", "still open", closed_on))
+```
+
+Visualize the data
+```{r}
+ggplot(relevant_t_mobile_2020, aes(x = opened_on)) + 
+  geom_bar() +
+  theme_bw() +
+  labs(title = "Frequency of opening of T-Mobile stores",
+       x = "Opened on",
+       y = "Count",
+       caption = "Safegraph data claims to have a 60 day margin of error. Made by Javier Torralba") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r}
+ggplot(relevant_t_mobile_2020, aes(x = closed_on)) + 
+  geom_bar() +
+  theme_bw() +
+  labs(title = "Frequency of closing of T-Mobile stores",
+       x = "Closed on",
+       y = "Count",
+       caption = "Safegraph data claims to have a 60 day margin of error. Made by Javier Torralba") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+## Understanding market share
+Given that we want to study the effects of the merger in the market, it is essential to understand the changes in market share from the point of descriptive statistics before and after the merger. 
+
+```{r}
+# Load Market Share data
+test_my_df <- fread("~/researchdrive/telecom/Javiers_tests/test_merger_on_market_share_regression_analysis/fraction_of_market_share_per_cbsa/visualizations_market_share_across_time/mkt_share_data.csv")
+
+# Create weighted average of market share data per CBSA (geo locator)
+weighted_average_market_share <- test_my_df %>%
+  group_by(date) %>%
+  summarise(weighted_average_market_share_at_t = weighted.mean(market_share_per_cbsa_at_t, w = size_of_cbsa),
+            weighted_average_market_share_verizon = weighted.mean(market_share_per_cbsa_verizon, w = size_of_cbsa),
+            weighted_average_market_share_t_mobile = weighted.mean(market_share_per_cbsa_t_mobile, w = size_of_cbsa),
+            weighted_average_market_share_sprint = weighted.mean(market_share_per_cbsa_sprint, w = size_of_cbsa)) %>%
+  mutate(year = format(date, "%Y"),
+         month = format(date, "%m")) %>%
+  pivot_longer(cols = c(weighted_average_market_share_at_t, weighted_average_market_share_verizon, weighted_average_market_share_t_mobile, weighted_average_market_share_sprint),
+               names_to = "companies",
+               values_to = "market_share")
+
+# Set month as factor
+weighted_average_market_share$month <- factor(weighted_average_market_share$month, levels = sprintf("%02d", 1:12))
+```
+
+```{r}
+# Visualize the market share over time!
+ggplot(weighted_average_market_share, aes(x = month, y = market_share, group = year, color = year)) +
+  geom_line(size = 0.7) +
+  labs(x = "Month", 
+       y = "Weighted average proportion of market share", 
+       title = "Weighted average market share per company", 
+       subtitle = "weight = size of CBSA",
+       caption = "Made by Javier Torralba") +
+  scale_color_viridis(discrete = TRUE, option = "inferno") +
+  theme_bw() +
+  facet_wrap(~companies, scales = "free_y")
+```
+
+
