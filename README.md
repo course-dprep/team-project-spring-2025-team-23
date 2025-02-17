@@ -29,7 +29,7 @@ may have affected conversion rates, affecting consumer retention. Second, fewer 
 in this market may have shifted market dynamics, influencing consumers. Third, regulators
 need empirical evidence to asses whether the approval of the merger led to the intended outcomes.
 Lastly, insights from this study can help telecom companies and future entrants make data-driven 
-stratgic decisions. 
+strategic decisions. 
 
 **Research Question**
 
@@ -82,19 +82,16 @@ To analyze the impact of the T-Mobile and Sprint merger on the U.S. telecommunic
 
 The primary regression model is specified as follows:
 
-$$
-\text{MarketShare}_{i, c, t} = \beta_0 + \beta_1 \text{MergerDate}_t + \Gamma \text{TechnologyControls}_{i, t} + \delta_c + \lambda_t + \epsilon_{i, c, t}
-$$
+`\( \text{MarketShare}_{i, c, t} = \beta_0 + \beta_1 \text{MergerDate}_t + \Gamma \text{TechnologyControls}_{i, t} + \delta_c + \lambda_t + \epsilon_{i, c, t} \)`
+
 
 And
 
-$$
-\text{ConsumerConversionRatio}_{i, c, t} = \beta_0 + \beta_1 \text{MergerDate}_t + \Gamma \text{TechnologyControls}_{i, t} + \delta_c + \lambda_t + \epsilon_{i, c, t}
-$$
+`\( \text{ConsumerConversionRatio}_{j, c, t} = \beta_0 + \beta_1 \text{MergerDate}_t + \Gamma \text{TechnologyControls}_{j, t} + \delta_c + \lambda_t + \epsilon_{j, c, t} \)`
 
 
 Where:
-- \( \text{MarketShare}_{i, c, t} \) = Market share of company \( i \) in CBSA \( c \) at time \( t \).
+- `\( \text{MarketShare}_{i, c, t} \) = Market share of company \( i \) in CBSA \( c \) at time \( t \).
 - \( \text{ConsumerConversionRatio}_{i, c, t} \) = Loss conversion ratio \( i \) in CBSA \( c \) at time \( t \).
 - \( \text{MergerDate}_t \) = Indicator variable that equals 1 after the T-Mobile/Sprint merger date and 0 otherwise.
 - \( \text{TechnologyControls}_{i, t} \) = A set of controls accounting for differences in network technologies (e.g., 4G, 5G deployment).
